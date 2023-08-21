@@ -16,9 +16,14 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.mapbus.R
+import com.example.mapbus.dataSource.api.ApiServiceBuilder
+import com.example.mapbus.dataSource.api.Localizacao
 import com.example.mapbus.databinding.FragmentHomeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeFragment : Fragment() {
 
@@ -60,6 +65,45 @@ class HomeFragment : Fragment() {
 
 
     }
+    private fun enviarDadosLocalizacao(localizacao: Localizacao) {
+
+
+        val call = ApiServiceBuilder.apiService.enviarLocalizacao(localizacao)
+        call.enqueue(object : Callback<Localizacao> {
+            override fun onResponse(call: Call<Localizacao>, response: Response<Localizacao>) {
+                if (response.isSuccessful) {
+                    val resposta = response.body()
+                    println("Resposta: $resposta")
+                } else {
+                    val erro = response.errorBody()?.string()
+                    println("Erro na resposta: $erro")
+                }
+            }
+
+            override fun onFailure(call: Call<Localizacao>, t: Throwable) {
+                println("Falha na requisição: ${t.message}")
+            }
+        })
+    }
+
+    private fun obterDadosDaApi() {
+        val call = ApiServiceBuilder.apiService.obterLocalizacao()
+        call.enqueue(object : Callback<Localizacao> {
+            override fun onResponse(call: Call<Localizacao>, response: Response<Localizacao>) {
+                if (response.isSuccessful) {
+                    val localizacao = response.body()
+                    println("Localização recebida: $localizacao")
+                } else {
+                    val erro = response.errorBody()?.string()
+                    println("Erro na resposta: $erro")
+                }
+            }
+
+            override fun onFailure(call: Call<Localizacao>, t: Throwable) {
+                println("Falha na requisição: ${t.message}")
+            }
+        })
+    }
 
     private fun getCurrentLocation() {
         if (checkPermissions()) {
@@ -83,6 +127,9 @@ class HomeFragment : Fragment() {
                             .show()
                     } else {
                         Toast.makeText(requireContext(), "Sucesso", Toast.LENGTH_LONG).show()
+                        var localizacao = Localizacao("",location.latitude,location.longitude,0)
+                        enviarDadosLocalizacao(localizacao)
+                        obterDadosDaApi()
                         requireActivity().findViewById<TextView>(R.id.latitude).text = location.latitude.toString()
                         requireActivity().findViewById<TextView>(R.id.longitude).text = location.longitude.toString()
                     }
