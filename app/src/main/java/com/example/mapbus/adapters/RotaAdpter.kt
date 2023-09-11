@@ -6,35 +6,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mapbus.R
 import com.example.mapbus.model.Rota
 
-class RotaAdpter(private var listaRotas: ArrayList<Rota>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RotaAdapter(private var listaRotas: MutableList<Rota>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_PRIMEIRO = 0
     private val VIEW_TYPE_PADRAO = 1
 
-    class RotaViewHolder(intemView: View) : RecyclerView.ViewHolder(intemView) {
+    class RotaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(rota: Rota) {
-            itemView.findViewById<TextView>(R.id.textNomedaParada).text = rota.parada
+            itemView.findViewById<TextView>(R.id.textNomedaParada).text = rota.nome_ponto
             itemView.findViewById<TextView>(R.id.horario).text = rota.horario
         }
     }
 
     // ViewHolder para o primeiro item
-    class PrimeiroViewHolder(intemView: View) : RecyclerView.ViewHolder(intemView) {
+    class PrimeiroViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(rota: Rota) {
-            itemView.findViewById<TextView>(R.id.textNomedaParada).text = rota.parada
+            itemView.findViewById<TextView>(R.id.textNomedaParada).text = rota.nome_ponto
             itemView.findViewById<TextView>(R.id.horario).text = rota.horario
         }
     }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_PRIMEIRO) {
-            val intemView = LayoutInflater.from(parent.context).inflate(R.layout.item_primeiro, parent, false)
-            PrimeiroViewHolder(intemView)
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_primeiro, parent, false)
+            PrimeiroViewHolder(itemView)
         } else {
-            val intemView = LayoutInflater.from(parent.context).inflate(R.layout.recycle_rotas, parent, false)
-            RotaViewHolder(intemView)
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recycle_rotas, parent, false)
+            RotaViewHolder(itemView)
         }
     }
 

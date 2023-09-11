@@ -15,8 +15,8 @@ class RotaRepository(context: Context) {
         val db = dbHelper.writableDatabase
         //criar o mapa
         val valores = ContentValues()
-        valores.put(DataDefinitions.Rota.Columns.NOME_DA_ROTA ,rota.nomeRota)
-        valores.put(DataDefinitions.Rota.Columns.PARADA ,rota.parada)
+
+        valores.put(DataDefinitions.Rota.Columns.PARADA ,rota.nome_ponto)
         valores.put(DataDefinitions.Rota.Columns.HORARIO ,rota.horario)
         //inserindo os valores
         val id = db.insert(DataDefinitions.Rota.TABLE_NAME, null ,valores)
@@ -35,7 +35,6 @@ class RotaRepository(context: Context) {
             while(cursor.moveToNext()){
                 var rota = Rota(
                     cursor.getInt(cursor.getColumnIndex(DataDefinitions.Rota.Columns.ID)),
-                    cursor.getString(cursor.getColumnIndex(DataDefinitions.Rota.Columns.NOME_DA_ROTA)),
                     cursor.getString(cursor.getColumnIndex(DataDefinitions.Rota.Columns.PARADA)),
                     cursor.getString(cursor.getColumnIndex(DataDefinitions.Rota.Columns.HORARIO))
                 )

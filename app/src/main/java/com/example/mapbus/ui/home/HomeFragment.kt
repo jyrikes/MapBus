@@ -20,6 +20,7 @@ import com.example.mapbus.dataSource.api.ApiServiceBuilder
 import com.example.mapbus.dataSource.api.Localizacao
 import com.example.mapbus.dataSource.api.Paradas
 import com.example.mapbus.databinding.FragmentHomeBinding
+import com.example.mapbus.model.Rota
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import retrofit2.Call
@@ -74,61 +75,10 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun calcularDistancia(latitude1: Double, longitude1: Double, latitude2: Double, longitude2: Double): Double {
-        val earthRadius = 6371000.0 // Raio médio da Terra em metros
-        val dLat = Math.toRadians(latitude2 - latitude1)
-        val dLng = Math.toRadians(longitude2 - longitude1)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2)) *
-                Math.sin(dLng / 2) * Math.sin(dLng / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return earthRadius * c
-    }
 
-    fun encontrarParadaMaisProxima(latitudeEnviada: Double, longitudeEnviada: Double, paradas: List<Paradas>): Paradas? {
-        var paradaProxima: Paradas? = null
-        var menorDistancia = Double.MAX_VALUE
 
-        for (parada in paradas) {
-            val distancia = calcularDistancia(latitudeEnviada, longitudeEnviada, parada.latitude, parada.longitude)
-            if (distancia <= 100.0 && distancia < menorDistancia) {
-                menorDistancia = distancia
-                paradaProxima = parada
-            }
-        }
 
-        return paradaProxima
-    }
 
-    private fun calcularLocalizacao(localizacao: Localizacao): String? {
-
-        val coordenadas = listOf(
-            Paradas("09:00", -8.319598, -36.395205, 3, "AEB"),
-            Paradas("09:02", -8.326801, -36.405290, 3, "UABJ"),
-            Paradas("09:08", -8.344497, -36.413362, 3, "PRAÇA DAS CRIANÇAS"),
-            Paradas("09:10", -8.342243, -36.416842, 3, "Escola DR. Sebastião Cabral"),
-            Paradas("09:15", -8.345663, -36.434173, 3, "Trevo de Acesso"),
-            Paradas("09:18", -8.339146, -36.432410, 3, "EREM João Monteiro"),
-            Paradas("09:20", -8.337285, -36.430412, 3, "Posto PETROVIA"),
-            Paradas("09:22", -8.337575, -36.425721, 3, "Centro"),
-            Paradas("09:24", -8.337353, -36.419071, 3, "Fórum"),
-            Paradas("09:28", -8.328507, -36.420694, 3, "Praça dos Eventos"),
-            Paradas("09:29", -8.325523, -36.418549, 3, "Colégio Éxito"),
-            Paradas("09:37", -8.333349, -36.417440, 3, "Escola Prof. Donino"),
-            Paradas("09:41", -8.331854, -36.413564, 3, "Placa do Hospital Santa Fé"),
-            Paradas("09:43", -8.326801, -36.405290, 3, "UABJ"),
-            Paradas("09:45", -8.319598, -36.395205, 3, "AEB"),
-            Paradas("8:90", -8.3227511,-36.3913617,3,"home")
-        )
-
-        val localizacaoProxima = encontrarParadaMaisProxima(localizacao.latitude, localizacao.longitude, coordenadas)
-        if (localizacaoProxima != null) {
-            return localizacaoProxima.nome
-        }else{
-            return "null"
-        }
-
-    }
     private fun enviarDadosLocalizacao(localizacao: Localizacao) {
 
 
@@ -157,8 +107,6 @@ class HomeFragment : Fragment() {
                 if (response.isSuccessful) {
                     val localizacao = response.body()
                     println("Localização recebida: $localizacao")
-                    var nomeLocal = localizacao?.let { calcularLocalizacao(it) }
-                    requireActivity().findViewById<TextView>(R.id.latitude).text = nomeLocal
 
                 } else {
                     val erro = response.errorBody()?.string()
@@ -196,8 +144,8 @@ class HomeFragment : Fragment() {
                         Toast.makeText(requireContext(), "Sucesso", Toast.LENGTH_LONG).show()
                         var localizacao = Localizacao("",location.latitude,location.longitude,0)
                         enviarDadosLocalizacao(localizacao)
-                        requireActivity().findViewById<TextView>(R.id.latitude).text = location.latitude.toString()
-                        requireActivity().findViewById<TextView>(R.id.longitude).text = location.longitude.toString()
+                        requireActivity().findViewById<TextView>(R.id.latitude).text = "Enviado"
+
 
                     }
                 }
