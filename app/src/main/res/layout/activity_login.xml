@@ -34,6 +34,7 @@
                 android:layout_marginTop="16dp"
                 android:src="@drawable/img"
 
+
                 />
 
             <EditText
@@ -42,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:textColorHint="@color/black"
+                android:textColor="@color/black"
                 android:hint="Usuário" />
 
             <EditText
@@ -50,6 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:textColorHint="@color/black"
+                android:textColor="@color/black"
+
                 android:hint="Senha"
                 android:inputType="textPassword" />
 
@@ -61,35 +65,12 @@
                 android:textColor="@color/white"
                 android:text="Login" />
 
-            <TextView
-                android:id="@+id/textViewOr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
-                android:text="Ou" />
-
             <LinearLayout
                 android:id="@+id/linearLayoutSocialLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp">
-
-                <ImageButton
-                    android:id="@+id/imageButtonGoogle"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp" />
-
-
-                <ImageButton
-                    android:id="@+id/imageButtonFacebook"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="16dp" />
-
-            </LinearLayout>
+                android:layout_marginTop="16dp"/>
 
         </LinearLayout>
 

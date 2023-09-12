@@ -1,11 +1,13 @@
 package com.example.mapbus.ui.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -13,12 +15,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.mapbus.R
 import com.example.mapbus.dataSource.api.ApiServiceBuilder
 import com.example.mapbus.dataSource.api.Localizacao
-import com.example.mapbus.dataSource.api.Paradas
 import com.example.mapbus.databinding.FragmentHomeBinding
 import com.example.mapbus.model.Rota
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -26,10 +28,9 @@ import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class HomeFragment : Fragment() {
 
@@ -63,6 +64,7 @@ class HomeFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         binding.toggleButton3.setOnClickListener {
@@ -74,6 +76,13 @@ class HomeFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private  fun getDate(): String? {
+        val timestamp = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+            .format(DateTimeFormatter.ofPattern("MM.dd.yyy hh.mm.ss a"))
+
+        return timestamp // 01.01.2017 01.59.13 pm
+    }
 
 
 
@@ -120,6 +129,8 @@ class HomeFragment : Fragment() {
         })
     }
 
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getCurrentLocation() {
         if (checkPermissions()) {
             if (isLocationEnabled()) {
@@ -142,9 +153,12 @@ class HomeFragment : Fragment() {
                             .show()
                     } else {
                         Toast.makeText(requireContext(), "Sucesso", Toast.LENGTH_LONG).show()
-                        var localizacao = Localizacao("",location.latitude,location.longitude,0)
+                        val horario = getDate()
+                        val localizacao = Localizacao(horario,location.latitude,location.longitude,0)
                         enviarDadosLocalizacao(localizacao)
-                        requireActivity().findViewById<TextView>(R.id.latitude).text = "Enviado"
+                        requireActivity().findViewById<TextView>(R.id.signs).text = " Atual ponto - ônibus "
+                        encontrarParadaMaisRecente()
+
 
 
                     }
@@ -193,6 +207,7 @@ class HomeFragment : Fragment() {
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -208,4 +223,29 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    fun encontrarParadaMaisRecente(){
+        val call = ApiServiceBuilder.apiService.obterRota()
+        call.enqueue(object : Callback<Rota> {
+            override fun onResponse(call: Call<Rota>, response: Response<Rota>) {
+                if (response.isSuccessful) {
+                    val rota = response.body()
+                    println(response.body())
+                    if (rota!=null) {
+                       var nome = rota.nome_ponto
+                        requireActivity().findViewById<TextView>(R.id.nomePonto).text = nome
+                    }
+                } else {
+                    val erro = response.errorBody()?.string()
+                    println("Erro na resposta: $erro")
+                }
+            }
+            override fun onFailure(call: Call<Rota>, t: Throwable) {
+                println("Falha na requisição: ${t.message}")
+
+            }
+
+        })
+    }
 }
+

@@ -14,18 +14,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var login : ActivityLoginBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        login = ActivityLoginBinding.inflate(layoutInflater)
 
-        setContentView(login.root)
 
-        val buttonLogin = login.buttonLogin
-
-        buttonLogin.setOnClickListener {
             binding = ActivityMainBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
@@ -46,4 +41,3 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-}

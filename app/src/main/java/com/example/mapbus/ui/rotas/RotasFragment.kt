@@ -1,6 +1,7 @@
 package com.example.mapbus.ui.rotas
 
 import RotaAdapter
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -51,12 +52,15 @@ class RotasFragment : Fragment() {
         _binding = null
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
 
-        initRecycle(binding.root)
+        val rotasRecycle = initRecycle(binding.root)
         swipeRefreshLayout.setOnRefreshListener {
+            println("recarregando")
 
-            encontrarParadaMaisRecente()
+            encontrarParadaMaisRecente(rotasRecycle)
+            rotasRecycle.adapter?.notifyDataSetChanged()
             // on below line we are setting is refreshing to false.
             swipeRefreshLayout.isRefreshing = false
 
@@ -69,21 +73,24 @@ class RotasFragment : Fragment() {
 
         super.onAttach(context)
     }
-    fun initRecycle(root : View){
+    fun initRecycle(root : View):RecyclerView{
 
         val rotasRecyclerView = root.findViewById<RecyclerView>(R.id.rotasRecycle)
         rotasRecyclerView.layoutManager = LinearLayoutManager(root.context,LinearLayoutManager.VERTICAL,false)
         val dados = DataSource.getRota()
         rotasRecyclerView.adapter = RotaAdapter(dados)
+        return rotasRecyclerView
     }
-    fun encontrarParadaMaisRecente(){
+    fun encontrarParadaMaisRecente(recyclerView: RecyclerView){
         val call = ApiServiceBuilder.apiService.obterRota()
         call.enqueue(object : Callback<Rota> {
             override fun onResponse(call: Call<Rota>, response: Response<Rota>) {
                 if (response.isSuccessful) {
                     val rota = response.body()
+                    println(response.body())
                     if (rota!=null) {
                         DataSource.adicionarRota(rota)
+                        recyclerView.adapter?.notifyItemInserted(0)
                     }
                 } else {
                     val erro = response.errorBody()?.string()
