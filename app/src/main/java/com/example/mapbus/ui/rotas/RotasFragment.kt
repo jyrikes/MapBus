@@ -27,6 +27,7 @@ class RotasFragment : Fragment() {
 
     private var _binding: FragmentRotasBinding? = null
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var placeTextView: TextView
 
 
     // This property is only valid between onCreateView and
@@ -42,7 +43,7 @@ class RotasFragment : Fragment() {
         _binding = FragmentRotasBinding.inflate(inflater, container, false)
         val root: View = binding.root
         swipeRefreshLayout = binding.container
-
+        placeTextView = binding.root.findViewById<TextView>(R.id.emptyTextView)
 
         return root
     }
@@ -56,9 +57,15 @@ class RotasFragment : Fragment() {
     override fun onResume() {
 
         val rotasRecycle = initRecycle(binding.root)
+       if (rotasRecycle.adapter?.itemCount==0){
+            rotasRecycle.visibility = View.GONE
+            placeTextView.visibility = View.VISIBLE
+       }
+
         swipeRefreshLayout.setOnRefreshListener {
             println("recarregando")
-
+            rotasRecycle.visibility = View.VISIBLE
+            placeTextView.visibility = View.GONE
             encontrarParadaMaisRecente(rotasRecycle)
             rotasRecycle.adapter?.notifyDataSetChanged()
             // on below line we are setting is refreshing to false.
