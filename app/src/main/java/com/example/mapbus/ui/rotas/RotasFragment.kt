@@ -58,14 +58,15 @@ class RotasFragment : Fragment() {
 
         val rotasRecycle = initRecycle(binding.root)
        if (rotasRecycle.adapter?.itemCount==0){
-            rotasRecycle.visibility = View.GONE
+            rotasRecycle.visibility = View.INVISIBLE
             placeTextView.visibility = View.VISIBLE
        }
 
         swipeRefreshLayout.setOnRefreshListener {
+            binding.root.bringToFront()
             println("recarregando")
             rotasRecycle.visibility = View.VISIBLE
-            placeTextView.visibility = View.GONE
+            placeTextView.visibility = View.INVISIBLE
             encontrarParadaMaisRecente(rotasRecycle)
             rotasRecycle.adapter?.notifyDataSetChanged()
             // on below line we are setting is refreshing to false.

@@ -111,6 +111,7 @@ class MapaFragment : Fragment() {
                     val mapController = mapView.controller
                     val startPoint = latitude?.let { longitude?.let { it1 -> GeoPoint(it, it1) } };
                     mapController.setCenter(startPoint)
+                    mapController.setZoom(19)
 
                 } else {
                     val erro = response.errorBody()?.string()

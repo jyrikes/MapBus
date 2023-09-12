@@ -67,15 +67,16 @@
                         android:text=""
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="40sp" />
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/nomePonto"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="@color/white"
-                        android:textSize="40sp" />
+                        android:textAlignment="center"
+                        android:textColor="@color/blue_main"
+                        android:textSize="30sp" />
 
                     <Button
                         android:id="@+id/toggleButton3"
